@@ -1,0 +1,21 @@
+name: Sync to Gitee Mirror
+
+on:
+  push:
+    branches: [main, patches, main-no-ci]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Push to Gitee
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          git remote add gitee https://linghu-wangjie:${{ secrets.GITEE_TOKEN }}@gitee.com/linghu-wangjie/${REPO_NAME}.git
+          git push gitee --all --force
+          git push gitee --tags
